@@ -24,4 +24,11 @@ public class GlobalExceptionHandler {
         }
         return R.error("failed！");
     }
+
+    @ExceptionHandler(CustomException.class)
+    public R<String> exceptionHandler(CustomException ce){
+        log.error(ce.getMessage());
+        return R.error(ce.getMessage());
+    }
+
 }
