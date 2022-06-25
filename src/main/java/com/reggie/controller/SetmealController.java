@@ -78,4 +78,38 @@ public class SetmealController {
         return R.success("success");
     }
 
+    @PostMapping("/status/{status}")
+    public R<String> changeStatus(@PathVariable Integer status,@RequestParam List<Long> ids){
+        setmealService.changeStatus(status,ids);
+        return R.success("修改成功");
+    }
+
+    @GetMapping("/{id}")
+    @Transactional
+    public R<SetmealDto> get(@PathVariable Long id){
+        //获取套餐基本属性
+        Setmeal setmeal = setmealService.getById(id);
+        SetmealDto setmealDto = new SetmealDto();
+        //将套餐基本属性复制到DTO中
+        BeanUtils.copyProperties(setmeal,setmealDto);
+        //条件构造器
+        LambdaQueryWrapper<SetmealDish> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(SetmealDish::getSetmealId,id);
+        //获取套餐菜品关系表信息
+        List<SetmealDish> setmealDishes = setmealDishService.list(queryWrapper);
+        setmealDto.setSetmealDishes(setmealDishes);
+
+        //获取分类名称信息
+        Category category = categoryService.getById(setmealDto.getCategoryId());
+        setmealDto.setCategoryName(category.getName());
+
+        return R.success(setmealDto);
+    }
+
+    @PutMapping
+    public R<String> update(@RequestBody SetmealDto setmealDto){
+        log.info(setmealDto.toString());
+        return null;
+    }
+
 }

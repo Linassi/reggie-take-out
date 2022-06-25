@@ -9,4 +9,5 @@ import java.util.List;
 public interface SetmealService extends IService<Setmeal> {
     public void saveWithDish(SetmealDto setmealDto);
     public void removeWithDish(List<Long> ids);
+    public void changeStatus(Integer status,List<Long> ids);
 }

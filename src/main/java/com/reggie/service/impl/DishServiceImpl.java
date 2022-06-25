@@ -2,6 +2,7 @@ package com.reggie.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.reggie.dto.DishDto;
 import com.reggie.entity.Dish;
@@ -84,19 +85,23 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     }
 
     @Override
-    public void removeDishAndFavor(Long id) {
+    public void removeDishAndFavor(List<Long> ids) {
         //清理当前菜品的口味数据---dish_flavor表的delete操作
         LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(DishFlavor::getDishId,id);
+        queryWrapper.in(DishFlavor::getDishId,ids);
         dishFlavorService.remove(queryWrapper);
-        this.removeById(id);
+        this.removeByIds(ids);
     }
 
     @Override
-    public void changeDishSellingStatus(Integer status, Long id) {
-        Dish dish = this.getById(id);
-        dish.setStatus(status);
-        this.updateById(dish);
+    @Transactional
+    public void changeDishSellingStatus(Integer status,List<Long> ids) {
+        List<Dish> dishs = this.listByIds(ids);
+        dishs.stream().map((item)->{
+            item.setStatus(status);
+            return item;
+        }).collect(Collectors.toList());
+        this.updateBatchById(dishs);
     }
 
 }

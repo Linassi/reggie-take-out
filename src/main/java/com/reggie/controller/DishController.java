@@ -94,13 +94,13 @@ public class DishController {
     }
 
     @PostMapping("/status/{status}")
-    public R<String> changeStatus(@PathVariable Integer status,Long ids){
+    public R<String> changeStatus(@PathVariable Integer status,@RequestParam List<Long> ids){
         dishService.changeDishSellingStatus(status,ids);
         return R.success("修改成功");
     }
 
     @DeleteMapping
-    public R<String> removeDish(Long ids){
+    public R<String> removeDish(@RequestParam List<Long> ids){
         dishService.removeDishAndFavor(ids);
         return R.success("删除成功");
     }

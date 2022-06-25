@@ -61,4 +61,18 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
     }
 
+    @Override
+    @Transactional
+    public void changeStatus(Integer status, List<Long> ids) {
+
+        List<Setmeal> setmeals = this.listByIds(ids);
+
+        setmeals.stream().map((item) ->{
+            item.setStatus(status);
+            return item;
+        }).collect(Collectors.toList());
+
+        this.updateBatchById(setmeals);
+    }
+
 }
