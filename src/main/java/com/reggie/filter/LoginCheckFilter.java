@@ -31,11 +31,20 @@ public class LoginCheckFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         /*log.info("拦截到请求：{}",request.getRequestURI());
         filterChain.doFilter(request,response);*/
+
         //1. 获取本次请求URI
-        //log.info("拦截到请求：{}",request.getRequestURI());
+        log.info("拦截到请求：{}",request.getRequestURI());
         String requestURI = request.getRequestURI();
         //定义不需要处理的请求路径
-        String[] urls = new String[]{"/employee/login","/employee/logout","/backend/**","/front/**","/common/**"};
+        String[] urls = new String[]{
+            "/employee/login",
+            "/employee/logout",
+            "/backend/**",
+            "/front/**",
+            "/common/**",
+            "/user/sendMsg",
+            "/user/login"
+        };
         //2. 判断本次请求是否需要处理
         boolean check = check(urls,requestURI);
         //3. 如果不需要处理，则直接放行
@@ -52,6 +61,18 @@ public class LoginCheckFilter implements Filter {
 
             Long empId = (Long) request.getSession().getAttribute("employee");
             BaseContext.setCurrentId(empId);
+
+            //log.info("{} 已登录",request.getSession().getAttribute("employee"));
+            filterChain.doFilter(request,response);
+            return;
+        }
+        if (request.getSession().getAttribute("user") != null){
+
+            long id = Thread.currentThread().getId();
+            //log.info("过滤器线程id为：{}",id);
+
+            Long userId = (Long) request.getSession().getAttribute("user");
+            BaseContext.setCurrentId(userId);
 
             //log.info("{} 已登录",request.getSession().getAttribute("employee"));
             filterChain.doFilter(request,response);
