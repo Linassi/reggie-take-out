@@ -6,9 +6,9 @@ spring:
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://127.0.0.1:3306/reggie?serverTimezone=Asia/Shanghai&Unicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://192.168.3.10:3306/reggie?serverTimezone=Asia/Shanghai&Unicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: manager
-      password: password
+      password: Admin123.
   mybatis-plus:
     configuration:
       #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射
@@ -25,8 +25,8 @@ spring:
     password:
     from: xx@163.com
   redis:
-    host: 127.0.0.1
-    password: password
+    host: 192.168.3.10
+    password: admin123.
     port: 6379
     database: 0
     jedis:
@@ -35,8 +35,9 @@ spring:
         max-wait: 1ms
         max-idle: 8
         min-idle: 0
-
-
+  cache:
+    redis:
+      time-to-live: 1800000
 
 reggie:
   path: d://img/

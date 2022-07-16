@@ -98,7 +98,9 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
     public void removeDishAndFavor(List<Long> ids) {
         //清理当前菜品的口味数据---dish_flavor表的delete操作
         LambdaQueryWrapper<DishFlavor> queryWrapper = new LambdaQueryWrapper<>();
+
         queryWrapper.in(DishFlavor::getDishId,ids);
+
         dishFlavorService.remove(queryWrapper);
         this.removeByIds(ids);
     }

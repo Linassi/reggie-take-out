@@ -115,8 +115,8 @@ public class DishController {
 
     @DeleteMapping
     public R<String> removeDish(@RequestParam List<Long> ids){
-        dishService.removeDishAndFavor(ids);
 
+        dishService.removeDishAndFavor(ids);
         return R.success("删除成功");
     }
 
