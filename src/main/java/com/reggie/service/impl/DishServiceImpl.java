@@ -12,6 +12,7 @@ import com.reggie.service.DishService;
 import com.reggie.mapper.DishMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +43,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }).collect(Collectors.toList());
 
         //先从redis中获取缓存数据
-        String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
-        redisTemplate.delete(key);
+        /*String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
+        redisTemplate.delete(key);*/
         dishFlavorService.saveBatch(flavors);
 
     }
@@ -88,8 +89,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         }).collect(Collectors.toList());
 
         //先从redis中获取缓存数据
-        String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
-        redisTemplate.delete(key);
+        //String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
+        //redisTemplate.delete(key);
 
         dishFlavorService.saveBatch(flavors);
     }
@@ -112,8 +113,8 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
         dishs.stream().map((item)->{
             item.setStatus(status);
             //先从redis中获取缓存数据
-            String key = "dish_" + item.getCategoryId() + "_" + item.getStatus();
-            redisTemplate.delete(key);
+            //String key = "dish_" + item.getCategoryId() + "_" + item.getStatus();
+           // redisTemplate.delete(key);
             return item;
         }).collect(Collectors.toList());
         this.updateBatchById(dishs);

@@ -60,15 +60,18 @@ public class UserController {
 
     @PostMapping("/login")
     public R<User> login(@RequestBody Map map, HttpSession session){
+        //传入的邮箱和验证码
         String phone = map.get("phone").toString();
         String code = map.get("code").toString();
 
         //Object codeInSession = session.getAttribute(phone);
+        //从redis中获取缓存的验证码，key为邮箱号
         Object codeInSession = redisTemplate.opsForValue().get(phone);
 
         if (codeInSession != null && codeInSession.equals(code)){
             LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
             queryWrapper.eq(User::getPhone,phone);
+            //查询数据库中是否有该用户
             User user = userService.getOne(queryWrapper);
             if (user == null){
                 user = new User();

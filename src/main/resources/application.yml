@@ -1,12 +1,17 @@
 server:
   port: 80
+
+logging:
+  level:
+    com.cloudtech.dao: debug
+
 spring:
   application:
     name:
   datasource:
     druid:
       driver-class-name: com.mysql.cj.jdbc.Driver
-      url: jdbc:mysql://192.168.3.10:3306/reggie?serverTimezone=Asia/Shanghai&Unicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      url: jdbc:mysql://192.168.43.70:3306/reggie?serverTimezone=Asia/Shanghai&Unicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
       username: manager
       password: Admin123.
   mybatis-plus:
@@ -25,7 +30,7 @@ spring:
     password:
     from: xx@163.com
   redis:
-    host: 192.168.3.10
+    host: 192.168.43.70
     password: admin123.
     port: 6379
     database: 0

@@ -14,6 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +37,13 @@ public class DishController {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    /**
+     * 管理端页面，获取菜品分页查询
+     * @param page
+     * @param pageSize
+     * @param name
+     * @return
+     */
     @GetMapping("/page")
     public R<Page> page(int page, int pageSize,String name){
         log.info("page = {},pageSize = {}",page,pageSize);
@@ -83,12 +92,13 @@ public class DishController {
      * @return
      */
     @PostMapping
+    @CacheEvict(value = "dishCache",allEntries = true)
     public R<String> save(@RequestBody DishDto dishDto){
         //log.info(dishDto.toString());
         dishService.saveWithFlavor(dishDto);
         //先从redis中获取缓存数据
-        String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
-        redisTemplate.delete(key);
+        //String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
+        //redisTemplate.delete(key);
         return R.success("新增菜品成功！");
     }
 
@@ -99,21 +109,24 @@ public class DishController {
     }
 
     @PutMapping
+    @CacheEvict(value = "dishCache",allEntries = true)
     public R<String> update(@RequestBody DishDto dishDto){
         dishService.updateWithFlavors(dishDto);
         //先从redis中获取缓存数据
-        String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
-        redisTemplate.delete(key);
+        //String key = "dish_" + dishDto.getCategoryId() + "_" + dishDto.getStatus();
+        //redisTemplate.delete(key);
         return R.success("更新成功");
     }
 
     @PostMapping("/status/{status}")
+    @CacheEvict(value = "dishCache",allEntries = true)
     public R<String> changeStatus(@PathVariable Integer status,@RequestParam List<Long> ids){
         dishService.changeDishSellingStatus(status,ids);
         return R.success("修改成功");
     }
 
     @DeleteMapping
+    @CacheEvict(value = "dishCache",allEntries = true)
     public R<String> removeDish(@RequestParam List<Long> ids){
 
         dishService.removeDishAndFavor(ids);
@@ -136,17 +149,18 @@ public class DishController {
     }*/
 
     @GetMapping("/list")
+    @Cacheable(value = "dishCache",key =  "'dish_' + #dish.getCategoryId()+'_'+ #dish.status")
     public R<List<DishDto>> list(Dish dish){
 
         List<DishDto> dishDtoList = null;
         //先从redis中获取缓存数据
-        String key = "dish_" + dish.getCategoryId() + "_" + dish.getStatus();
+        /*String key = "dish_" + dish.getCategoryId() + "_" + dish.getStatus();
 
         dishDtoList = (List<DishDto>) redisTemplate.opsForValue().get(key);
         //如果查到了，直接返回
         if (dishDtoList != null){
             return R.success(dishDtoList);
-        }
+        }*/
 
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.orderByDesc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
@@ -167,7 +181,7 @@ public class DishController {
 
         }).collect(Collectors.toList());
 
-        redisTemplate.opsForValue().set(key,dishDtoList,60L, TimeUnit.MINUTES);
+        //redisTemplate.opsForValue().set(key,dishDtoList,60L, TimeUnit.MINUTES);
         return R.success(dishDtoList);
     }
 
