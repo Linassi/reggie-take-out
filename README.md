@@ -1,4 +1,4 @@
 # 工程简介
 
-# 延伸阅读
+基于流行的Spring Boot、mybatis plus等技术框架进行开发
 
